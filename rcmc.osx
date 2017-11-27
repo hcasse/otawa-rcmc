@@ -11,8 +11,8 @@ This script provides support for rcmc.
 
 <id>
     <arch>rcmc</arch>
-    <abi></abi>
-    <mach></mach>
+    <abi>elf</abi>
+    <mach>riscv</mach>
 </id>
 
 
@@ -21,11 +21,144 @@ This script provides support for rcmc.
 </configuration>
 
 <platform>
+	<processor class="otawa::hard::Processor">
+		<arch>rcmc</arch>
+		<model>riscv</model>
+	
+		<stages>
+			<stage id="Fetch">
+				<name>Fetch</name>
+				<width>1</width>
+				<type>FETCH</type>
+			</stage>
+			<stage id="Decode">
+				<name>Decode</name>
+				<width>1</width>
+				<type>LAZY</type>
+			</stage>
+		
+			<stage id="Execute">
+				<name>Execute</name>
+				<type>EXEC</type>
+				<width>1</width>
+				<ordered>true</ordered>
+				<fus>
+					<fu id="INT">
+						<name>Simple ALU instructions</name>
+						<width>1</width>
+						<latency>1</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="DIV">
+						<name>Integer Division</name>
+						<width>1</width>
+						<latency>35</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="MUL">
+						<name>Integer Multiplication</name>
+						<width>1</width>
+						<latency>5</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="Jump">
+						<name>Unconditional Jumps</name>
+						<width>1</width>
+						<latency>3</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="Load">
+						<name>Load Instructions</name>
+						<width>1</width>
+						<latency>2</latency> <!-- only when following instruction accesses value -->
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="Syscall">
+						<name>System Calls, Breakpoints, Traps</name>
+						<width>1</width>
+						<latency>3</latency>  <!-- not sure about this -->
+						<pipelined>false</pipelined>
+					</fu>
+				</fus>
+				<dispatch>
+					<inst>
+						<type>IS_ALU | IS_INT</type>
+						<fu ref="INT"/>
+					</inst>
+					<inst>
+						<type>IS_ALU | IS_INT | IS_DIV</type>
+						<fu ref="DIV"/>
+					</inst>
+					<inst>
+						<type>IS_ALU | IS_INT | IS_MUL</type>
+						<fu ref="MUL"/>
+					</inst>
+					<inst>
+						<type>IS_CONTROL | IS_CALL</type>
+						<fu ref="Jump"/>
+					</inst>
+					<inst>
+						<type>IS_CONTROL | IS_COND</type>
+						<fu ref="INT"/>  <!-- No latency when not taken -->
+					</inst>
+					<inst>
+						<type>IS_MEM | IS_LOAD</type>
+						<fu ref="Load"/> 
+					</inst>
+					<inst>
+						<type>IS_MEM | IS_STORE</type>
+						<fu ref="INT"/>
+					</inst>
+					<inst>
+						<type>IS_INTERN</type>
+						<fu ref="INT"/>  <!-- fence: 1 cycle -->
+					</inst>
+					<inst>
+						<type>IS_TRAP | IS_SPECIAL</type>
+						<fu ref="Syscall"/>
+					</inst>
+				</dispatch>
+			</stage>
+		
+			<stage id="Memory">
+				<name>Memory</name>
+				<type>LAZY</type>
+				<width>1</width>
+			</stage>
+		
+			<stage id="Write">
+				<name>Write Back</name>
+				<type>COMMIT</type>
+				<width>1</width>
+			</stage>
+		</stages>
+	
+		<queues>
+		</queues>
+	
+	</processor>
 
+
+	<memory>
+		<banks>
+			<bank>
+				<name>Local Memory</name>
+				<address>0x00000000</address>
+				<size>0</size> <!-- "0 size represents a full coverage of the address space, that is, a memory of size 2^32." -->
+				<type>SPM</type>
+				<latency>1</latency>
+				<write_latency>1</write_latency>
+				<cachable>false</cachable>
+				<writable>true</writable>
+			</bank>
+
+		</banks>
+	</memory>
 </platform>
 
 <script>
-
+	<step require="otawa::VIRTUALIZED_CFG_FEATURE"/>
+	<step require="otawa::ipet::WCET_FEATURE"/>
 </script>
 
 </otawa-script>
