@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<otawa-script
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+<name>rcmc</name>
+
+<info>
+This script provides support for rcmc.
+</info>
+
+<id>
+    <arch>rcmc</arch>
+    <abi></abi>
+    <mach></mach>
+</id>
+
+
+<configuration>
+
+</configuration>
+
+<platform>
+
+</platform>
+
+<script>
+
+</script>
+
+</otawa-script>
