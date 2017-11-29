@@ -61,6 +61,48 @@ This script provides support for rcmc.
 						<latency>5</latency>
 						<pipelined>false</pipelined>
 					</fu>
+					<fu id="FMUL">
+						<name>Floating Point Multiplication</name>
+						<width>1</width>
+						<latency>4</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="FDIVS">
+						<name>Floating Point Division (Single Precision)</name>
+						<width>1</width>
+						<latency>33</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="FDIVD">
+						<name>Floating Point Division (Double Precision)</name>
+						<width>1</width>
+						<latency>41</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="FSQRTS">
+						<name>Floating Point SQRT (Single Precision)</name>
+						<width>1</width>
+						<latency>45</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="FSQRTD">
+						<name>Floating Point SQRT (Double Precision)</name>
+						<width>1</width>
+						<latency>57</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="FSMALL">
+						<name>Floating Point Small Operations</name>
+						<width>1</width>
+						<latency>1</latency>
+						<pipelined>false</pipelined>
+					</fu>
+					<fu id="FCVT">
+						<name>Floating Point Conversion Operations</name>
+						<width>1</width>
+						<latency>2</latency>
+						<pipelined>false</pipelined>
+					</fu>
 					<fu id="Jump"><!--  add branch information -->
 						<name>Unconditional Jumps</name>
 						<width>1</width>
@@ -72,8 +114,7 @@ This script provides support for rcmc.
 						<name>Load Instructions</name>
 						<width>1</width>
 						<latency>1</latency>
-							<!-- only when following instruction accesses value -->
-							<!-- memoru wait is performed in ME -->
+							<!-- memory wait is performed in MEM stage -->
 						<pipelined>false</pipelined>
 					</fu>
 					<fu id="Syscall">
@@ -107,6 +148,42 @@ This script provides support for rcmc.
 					<inst>
 						<type>IS_MEM|IS_STORE</type>
 						<fu ref="INT"/>
+					</inst>
+					<inst>
+						<type>IS_MEM|IS_LOAD|IS_FLOAT</type>
+						<fu ref="INT"/>
+					</inst>
+					<inst>
+						<type>IS_MEM|IS_STORE|IS_FLOAT</type>
+						<fu ref="INT"/>
+					</inst>
+					<inst>
+						<type>IS_MUL|IS_FLOAT</type>
+						<fu ref="FMUL"/>
+					</inst>
+					<inst>
+						<type>IS_DIV|IS_FLOAT</type>
+						<fu ref="FDIVS"/>
+					</inst>
+					<inst>
+						<type>IS_DIV|IS_FLOAT|IS_SPECIAL</type>
+						<fu ref="FDIVD"/>
+					</inst>
+					<inst>
+						<type>IS_SHIFT|IS_FLOAT</type>
+						<fu ref="FSQRTS"/>
+					</inst>
+					<inst>
+						<type>IS_SHIFT|IS_FLOAT|IS_SPECIAL</type>
+						<fu ref="FSQRTD"/>
+					</inst>
+					<inst>
+						<type>IS_FLOAT</type>
+						<fu ref="FSMALL"/>
+					</inst>
+					<inst>
+						<type>IS_FLOAT|IS_INT</type>
+						<fu ref="FCVT"/>
 					</inst>
 					<inst>
 						<type>IS_INTERN</type>
