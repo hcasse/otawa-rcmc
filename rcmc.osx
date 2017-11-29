@@ -61,16 +61,19 @@ This script provides support for rcmc.
 						<latency>5</latency>
 						<pipelined>false</pipelined>
 					</fu>
-					<fu id="Jump">
+					<fu id="Jump"><!--  add branch information -->
 						<name>Unconditional Jumps</name>
 						<width>1</width>
-						<latency>3</latency>
+						<latency>1</latency>
 						<pipelined>false</pipelined>
+						<branch>true</branch>
 					</fu>
 					<fu id="Load">
 						<name>Load Instructions</name>
 						<width>1</width>
-						<latency>2</latency> <!-- only when following instruction accesses value -->
+						<latency>1</latency>
+							<!-- only when following instruction accesses value -->
+							<!-- memoru wait is performed in ME -->
 						<pipelined>false</pipelined>
 					</fu>
 					<fu id="Syscall">
@@ -82,31 +85,27 @@ This script provides support for rcmc.
 				</fus>
 				<dispatch>
 					<inst>
-						<type>IS_ALU | IS_INT</type>
+						<type>IS_ALU|IS_INT</type>
 						<fu ref="INT"/>
 					</inst>
 					<inst>
-						<type>IS_ALU | IS_INT | IS_DIV</type>
+						<type>IS_ALU|IS_INT|IS_DIV</type>
 						<fu ref="DIV"/>
 					</inst>
 					<inst>
-						<type>IS_ALU | IS_INT | IS_MUL</type>
+						<type>IS_ALU|IS_INT|IS_MUL</type>
 						<fu ref="MUL"/>
 					</inst>
 					<inst>
-						<type>IS_CONTROL | IS_CALL</type>
+						<type>IS_CONTROL</type>
 						<fu ref="Jump"/>
 					</inst>
 					<inst>
-						<type>IS_CONTROL | IS_COND</type>
-						<fu ref="INT"/>  <!-- No latency when not taken -->
-					</inst>
-					<inst>
-						<type>IS_MEM | IS_LOAD</type>
+						<type>IS_MEM|IS_LOAD</type>
 						<fu ref="Load"/> 
 					</inst>
 					<inst>
-						<type>IS_MEM | IS_STORE</type>
+						<type>IS_MEM|IS_STORE</type>
 						<fu ref="INT"/>
 					</inst>
 					<inst>
@@ -114,7 +113,8 @@ This script provides support for rcmc.
 						<fu ref="INT"/>  <!-- fence: 1 cycle -->
 					</inst>
 					<inst>
-						<type>IS_TRAP | IS_SPECIAL</type>
+						<!--  |IS_SPECIAL -->
+						<type>IS_TRAP</type>
 						<fu ref="Syscall"/>
 					</inst>
 				</dispatch>
@@ -124,6 +124,7 @@ This script provides support for rcmc.
 				<name>Memory</name>
 				<type>LAZY</type>
 				<width>1</width>
+				<mem>true</mem>
 			</stage>
 		
 			<stage id="Write">
@@ -158,6 +159,7 @@ This script provides support for rcmc.
 
 <script>
 	<step require="otawa::VIRTUALIZED_CFG_FEATURE"/>
+	<step require="otawa::etime::EDGE_TIME_FEATURE"/>
 	<step require="otawa::ipet::WCET_FEATURE"/>
 </script>
 
