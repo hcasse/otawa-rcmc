@@ -42,6 +42,7 @@ This script provides support for rcmc.
 				<type>EXEC</type>
 				<width>1</width>
 				<ordered>true</ordered>
+				
 				<fus>
 					<fu id="INT">
 						<name>Simple ALU instructions</name>
@@ -61,20 +62,20 @@ This script provides support for rcmc.
 						<latency>5</latency>
 						<pipelined>false</pipelined>
 					</fu>
+					<fu id="Load">
+						<name>Load Instructions</name>
+						<width>1</width>
+						<latency>1</latency>
+							<!-- only when following instruction accesses value -->
+							<!-- memory wait is performed in ME -->
+						<pipelined>false</pipelined>
+					</fu>
 					<fu id="Jump"><!--  add branch information -->
 						<name>Unconditional Jumps</name>
 						<width>1</width>
 						<latency>1</latency>
 						<pipelined>false</pipelined>
 						<branch>true</branch>
-					</fu>
-					<fu id="Load">
-						<name>Load Instructions</name>
-						<width>1</width>
-						<latency>1</latency>
-							<!-- only when following instruction accesses value -->
-							<!-- memoru wait is performed in ME -->
-						<pipelined>false</pipelined>
 					</fu>
 					<fu id="Syscall">
 						<name>System Calls, Breakpoints, Traps</name>
@@ -83,6 +84,7 @@ This script provides support for rcmc.
 						<pipelined>false</pipelined>
 					</fu>
 				</fus>
+				
 				<dispatch>
 					<inst>
 						<type>IS_ALU|IS_INT</type>
@@ -97,16 +99,16 @@ This script provides support for rcmc.
 						<fu ref="MUL"/>
 					</inst>
 					<inst>
-						<type>IS_CONTROL</type>
-						<fu ref="Jump"/>
-					</inst>
-					<inst>
 						<type>IS_MEM|IS_LOAD</type>
 						<fu ref="Load"/> 
 					</inst>
 					<inst>
 						<type>IS_MEM|IS_STORE</type>
 						<fu ref="INT"/>
+					</inst>
+					<inst>
+						<type>IS_CONTROL</type>
+						<fu ref="Jump"/>
 					</inst>
 					<inst>
 						<type>IS_INTERN</type>
@@ -118,6 +120,7 @@ This script provides support for rcmc.
 						<fu ref="Syscall"/>
 					</inst>
 				</dispatch>
+				
 			</stage>
 		
 			<stage id="Memory">
@@ -159,7 +162,10 @@ This script provides support for rcmc.
 
 <script>
 	<step require="otawa::VIRTUALIZED_CFG_FEATURE"/>
-	<step require="otawa::etime::EDGE_TIME_FEATURE"/>
+	<step require="otawa::etime::EDGE_TIME_FEATURE">
+		<!-- if you uncomment this, you have to create a directory named "xgraphs" -->
+		<!-- config name="otawa::GRAPHS_OUTPUT_DIRECTORY" value="xgraphs"/>  -->
+	</step>
 	<step require="otawa::ipet::WCET_FEATURE"/>
 </script>
 
