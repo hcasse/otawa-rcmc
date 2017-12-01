@@ -111,7 +111,7 @@ This script provides support for rcmc.
 						<branch>true</branch>
 					</fu>
 					<fu id="Syscall">
-						<name>System Calls, Breakpoints, Traps</name>
+						<name>eCall/eBreak</name>
 						<width>1</width>
 						<latency>3</latency>  <!-- not sure about this -->
 						<pipelined>false</pipelined>
@@ -190,9 +190,13 @@ This script provides support for rcmc.
 						<fu ref="INT"/>  <!-- fence: 1 cycle -->
 					</inst>
 					<inst>
+						<type>IS_CONTROL|IS_SPECIAL</type>
+						<fu ref="Syscall"/>
+					</inst>
+					<inst>
 						<!--  |IS_SPECIAL -->
 						<type>IS_TRAP</type>
-						<fu ref="Syscall"/>
+						<fu ref="INT"/> <!-- may take longer? -->
 					</inst>
 					<inst>
 						<type>0x40000|IS_LOAD</type>
