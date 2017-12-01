@@ -116,6 +116,12 @@ This script provides support for rcmc.
 						<latency>3</latency>  <!-- not sure about this -->
 						<pipelined>false</pipelined>
 					</fu>
+					<fu id="ATOMIC">
+						<name>Atomic Memory Operations</name>
+						<width>1</width>
+						<latency>5</latency> <!-- estimation since not implemented in architecture yet -->
+						<pipelined>false</pipelined>
+					</fu>
 				</fus>
 				
 				<dispatch>
@@ -187,6 +193,18 @@ This script provides support for rcmc.
 						<!--  |IS_SPECIAL -->
 						<type>IS_TRAP</type>
 						<fu ref="Syscall"/>
+					</inst>
+					<inst>
+						<type>IS_ATOMIC|IS_LOAD</type>
+						<fu ref="INT"/>
+					</inst>
+					<inst>
+						<type>IS_ATOMIC|IS_STORE</type>
+						<fu ref="INT"/>
+					</inst>
+					<inst>
+						<type>IS_ATOMIC</type>
+						<fu ref="ATOMIC"/>
 					</inst>
 				</dispatch>
 				
