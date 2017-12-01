@@ -195,15 +195,15 @@ This script provides support for rcmc.
 						<fu ref="Syscall"/>
 					</inst>
 					<inst>
-						<type>IS_ATOMIC|IS_LOAD</type>
+						<type>0x40000|IS_LOAD</type>
 						<fu ref="INT"/>
 					</inst>
 					<inst>
-						<type>IS_ATOMIC|IS_STORE</type>
+						<type>0x40000|IS_STORE</type>
 						<fu ref="INT"/>
 					</inst>
 					<inst>
-						<type>IS_ATOMIC</type>
+						<type>0x40000</type>
 						<fu ref="ATOMIC"/>
 					</inst>
 				</dispatch>
